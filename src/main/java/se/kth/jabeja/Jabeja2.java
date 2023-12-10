@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class Jabeja {
+public class Jabeja2 {
   final static Logger logger = Logger.getLogger(Jabeja.class);
   private final Config config;
   private final HashMap<Integer/*id*/, Node/*neighbors*/> entireGraph;
@@ -21,7 +21,7 @@ public class Jabeja {
   private boolean resultFileCreated = false;
 
   //-------------------------------------------------------------------
-  public Jabeja(HashMap<Integer, Node> graph, Config config) {
+  public Jabeja2(HashMap<Integer, Node> graph, Config config) {
     this.entireGraph = graph;
     this.nodeIds = new ArrayList(entireGraph.keySet());
     this.round = 0;
@@ -30,22 +30,22 @@ public class Jabeja {
     this.T = config.getTemperature();
   }
 
+
   //-------------------------------------------------------------------
   public void startJabeja() throws IOException {
-    int counter = 0;
     for (round = 0; round < config.getRounds(); round++) {
       for (int id : entireGraph.keySet()) {
         sampleAndSwap(id);
       }
-      System.err.println("temperatue: " + this.T);
-      if (this.T < 1.001 && round >= 400 && counter < 1) {
-        counter += 1;
-        this.T = 2;
-        System.err.println("resetting on round:" +round);
-      } 
+      
+      if (round % 10 == 0){
+        saCoolDown();
+      }
       //one cycle for all nodes have completed.
       //reduce the temperature
-      saCoolDown();
+      
+      System.err.println("temperature "+ this.T);
+
       report();
     }
   }
@@ -54,11 +54,10 @@ public class Jabeja {
    * Simulated analealing cooling function
    */
   private void saCoolDown(){
-    // TODO for second task
-    if (this.T > 1)
-      this.T -= config.getDelta();
-    if (this.T < 1)
-     this.T = 1;
+    if (this.T > 0)
+      this.T = this.T * config.getAlpha();
+    if (this.T < 0)
+      this.T = 0;
   }
 
   /**
@@ -101,13 +100,17 @@ public class Jabeja {
        Node nodeq = entireGraph.get(node);
        int dpp = getDegree(nodep, nodep.getColor());
        int dqq = getDegree(nodeq, nodeq.getColor());
-       int old = dpp + dqq;
+       int oldSol = dpp + dqq;
        int dpq = getDegree(nodep, nodeq.getColor());
        int dqp = getDegree(nodeq, nodep.getColor());
-       int newd = dpq + dqp;
-       if ((newd * this.T ) > old && newd > highestBenefit){
+       int newSol = dpq + dqp;
+      //  if ((newd * (this.T+1) ) > old && newd > highestBenefit){
+      //     bestPartner = nodeq;
+      //     highestBenefit = newd;
+      //  } 
+     if (this.doAccept(oldSol, newSol, this.T)){
           bestPartner = nodeq;
-          highestBenefit = newd;
+          highestBenefit = newSol;
        } 
  
     }
@@ -269,4 +272,19 @@ public class Jabeja {
 
     FileIO.append(round + delimiter + (edgeCuts) + delimiter + numberOfSwaps + delimiter + migrations + "\n", outputFilePath);
   }
+
+  public boolean doAccept(double cold, double cnew, double temperature) {
+    double acceptanceProbability = this.acceptanceProbability(cold, cnew, temperature);
+    double randomNumber = new Random().nextDouble();  // Generate a random number between 0 and 1
+    boolean res = acceptanceProbability > randomNumber;
+    // System.err.println("acceptance prob: "+ acceptanceProbability + "randomNumber: " + randomNumber);
+    return res;
+}
+
+  private double acceptanceProbability(double cold, double newTemperature, double temperature) {
+    // Calculate the acceptance probability using the formula: a = e^((cnew - cold) / temperature)
+    double exponent = (newTemperature - cold) / temperature;
+    double acceptanceProb = Math.exp(exponent);
+    return Math.min(1.0, acceptanceProb);
+}
 }

@@ -20,7 +20,7 @@ public class CLI {
   private boolean HELP = false;
 
   @Option(name = "-rounds", usage = "Number of rounds.")
-  private int ROUNDS = 1000;
+  private int ROUNDS = 2000;
 
   @Option(name = "-numPartitions", usage = "Number of partitions.")
   private int NUM_PARTITIONS = 4;
@@ -32,13 +32,13 @@ public class CLI {
   private float TEMPERATURE = 2;
 
   @Option(name = "-delta", usage = "Simulated annealing delta.")
-  private float DELTA = (float) 0.003;
+  private float DELTA = (float) 0.001;
 
   @Option(name = "-seed", usage = "Seed.")
   private int SEED = 0;
 
   @Option(name = "-alpha", usage = "Alpah parameter")
-  private float ALPHA = 2;
+  private float ALPHA = (float) 0.9;
 
   @Option(name = "-randNeighborsSampleSize", usage = "Number of random neighbors sample size.")
   private int randNeighborsSampleSize = 3;
