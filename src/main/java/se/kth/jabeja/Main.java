@@ -51,13 +51,13 @@ public class Main {
         return graph;
     }
 
-    private void startJabeja(HashMap<Integer, Node> graph) throws IOException {
-        Jabeja host = new Jabeja(graph, config);
-        host.startJabeja();
-    }
-
     // private void startJabeja(HashMap<Integer, Node> graph) throws IOException {
-    //     Jabeja2 host = new Jabeja2(graph, config);
+    //     Jabeja host = new Jabeja(graph, config);
     //     host.startJabeja();
     // }
+
+    private void startJabeja(HashMap<Integer, Node> graph) throws IOException {
+        Jabeja2 host = new Jabeja2(graph, config);
+        host.startJabeja();
+    }
 }
