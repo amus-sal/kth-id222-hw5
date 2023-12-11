@@ -20,7 +20,7 @@ public class CLI {
   private boolean HELP = false;
 
   @Option(name = "-rounds", usage = "Number of rounds.")
-  private int ROUNDS = 2000;
+  private int ROUNDS = 1000;
 
   @Option(name = "-numPartitions", usage = "Number of partitions.")
   private int NUM_PARTITIONS = 4;

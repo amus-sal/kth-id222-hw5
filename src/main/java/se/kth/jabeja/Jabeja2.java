@@ -33,14 +33,21 @@ public class Jabeja2 {
 
   //-------------------------------------------------------------------
   public void startJabeja() throws IOException {
+    int counter = 0;
     for (round = 0; round < config.getRounds(); round++) {
       for (int id : entireGraph.keySet()) {
         sampleAndSwap(id);
       }
       
-      if (round % 10 == 0){
+      if (round % 1 == 0){
         saCoolDown();
       }
+
+      if (this.T < 1.001 && round >= 400 && counter < 1) {
+        counter += 1;
+        this.T = 1;
+        System.err.println("resetting on round:" +round);
+      } 
       //one cycle for all nodes have completed.
       //reduce the temperature
       
